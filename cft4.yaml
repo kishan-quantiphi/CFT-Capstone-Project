@@ -1122,7 +1122,7 @@ Resources:
     Properties: 
       Description: Allows HTTPS from Load Balancer
       FromPort: 443
-      GroupName: !Ref ServerInstanceSecurityGroup
+      GroupId: !GetAtt [ServerInstanceSecurityGroup, GroupId]
       IpProtocol: tcp
       SourceSecurityGroupId: !Ref LBsecuritygroup
       ToPort: 443
@@ -1132,7 +1132,7 @@ Resources:
     Properties: 
       Description: Allows HTTP from Load Balancer
       FromPort: 80
-      GroupName: !Ref ServerInstanceSecurityGroup
+      GroupId: !GetAtt [ServerInstanceSecurityGroup, GroupId]
       IpProtocol: tcp
       SourceSecurityGroupId: !Ref LBsecuritygroup
       ToPort: 80
@@ -1143,7 +1143,7 @@ Resources:
     Properties: 
       Description: Allows SSH from Testing EC2
       FromPort: 22
-      GroupId: !Ref ServerInstanceSecurityGroup
+      GroupId: !GetAtt [ServerInstanceSecurityGroup, GroupId]
       IpProtocol: tcp
       SourceSecurityGroupId: !Ref UserInstanceSecurityGroup
       ToPort: 22
