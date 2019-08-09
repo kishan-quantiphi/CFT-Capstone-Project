@@ -800,9 +800,21 @@ Resources:
     Properties:
       # PropagateAtLaunch : True
       AvailabilityZones:
-        Fn::GetAZs: ''
+        -
+          Fn::Select:
+            - 0
+            - Fn::GetAZs: 
+                Ref : "AWS::Region"
+        -
+          Fn::Select:
+            - 1
+            - Fn::GetAZs: 
+                Ref : "AWS::Region"
       LaunchConfigurationName:
         Ref: LaunchConfig
+      VPCZoneIdentifier:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
       MinSize: '1'
       MaxSize: !FindInMap
         - environmentConfiguration
