@@ -1428,11 +1428,6 @@ Resources:
     Properties:
       AccessControl: PublicRead
       BucketName: !If [isProd, !Ref bucketName, !Join ['', [!Ref bucketName, '-dev']]] # p
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: false
-        BlockPublicPolicy: false
-        IgnorePublicAcls: false
-        RestrictPublicBuckets: false
       VersioningConfiguration:
         Status: !Ref versioningConfig
       Tags:
