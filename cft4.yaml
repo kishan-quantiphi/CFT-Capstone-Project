@@ -1422,43 +1422,7 @@ Resources:
 
 
   # ============== S3 ==============
-  S3ProdCat:
-    Type: 'AWS::S3::Bucket'
-    DeletionPolicy: Retain # change for prod
-    Properties:
-      AccessControl: PublicRead
-      BucketName: !If [isProd, !Ref bucketName, !Join ['', [!Ref bucketName, '-dev']]] # p
-      VersioningConfiguration:
-        Status: !Ref versioningConfig
-      Tags:
-        - 
-          Key: 'Name'
-          Value: !If [isProd, !Ref tagName, !Join ['', [!Ref tagName, '-dev']]] # p
-        - 
-          Key: 'creatorGroup'
-          Value: !Ref tagCreatorGroup # p
-        - 
-          Key: 'Project'
-          Value: !Ref tagProject # p
-
-  S3BucketPolicyProdCat:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket: !Ref S3ProdCat
-      PolicyDocument:
-        Statement:
-          -
-            Action:
-              - "s3:GetObject"
-            Effect: Allow
-            Resource:
-              Fn::Join:
-                - ''
-                -
-                  - "arn:aws:s3:::"
-                  - !Ref S3ProdCat
-                  - "/*"
-            Principal: "*"
+  
 
 
 Outputs:
