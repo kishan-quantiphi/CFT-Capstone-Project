@@ -800,22 +800,20 @@ Resources:
     Properties:
       # PropagateAtLaunch : True
       AvailabilityZones:
-        -
-          Fn::Select:
-            - 0
-            - Fn::GetAZs: 
-                Ref : "AWS::Region"
-        -
-          Fn::Select:
-            - 1
-            - Fn::GetAZs: 
-                Ref : "AWS::Region"
+        - Fn::Select:
+          - 1
+          - Fn::GetAZs: 
+              Ref : "AWS::Region"
+        - Fn::Select:
+          - 0
+          - Fn::GetAZs: 
+              Ref : "AWS::Region"
       LaunchConfigurationName:
         Ref: LaunchConfig
       VPCZoneIdentifier:
         - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2
-      MinSize: '1'
+      MinSize: 0
       MaxSize: !FindInMap
         - environmentConfiguration
         - !Ref Environment
@@ -839,13 +837,13 @@ Resources:
         Key: "creatorGroup"
         PropagateAtLaunch : True
         Value: "pe19batch2group3"
-    CreationPolicy:
-      ResourceSignal:
-        Timeout: PT15M
-        Count: '1'
+    # CreationPolicy:
+    #   ResourceSignal:
+    #     Timeout: PT15M
+    #     Count: '1'
     UpdatePolicy:
       AutoScalingRollingUpdate:
-        MinInstancesInService: '1'
+        MinInstancesInService: 0
         MaxBatchSize: '1'
         PauseTime: PT15M
         WaitOnResourceSignals: 'true'
@@ -1436,7 +1434,7 @@ Resources:
   # ============== S3 ==============
   S3ProdCat:
     Type: 'AWS::S3::Bucket'
-    DeletionPolicy: Retain # change for prod
+    # DeletionPolicy: Retain # change for prod
     Properties:
       AccessControl: PublicRead
       BucketName: !If [isProd, !Ref bucketName, !Join ['', [!Ref bucketName, '-dev']]] # p
