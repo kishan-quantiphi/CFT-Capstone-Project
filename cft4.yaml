@@ -344,7 +344,7 @@ Resources:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
       DBSubnetGroupDescription: 'Subnet group for RDS'
-      DBSubnetGroupName: !Ref dbSubGrpName # p
+      DBSubnetGroupName: !If [isProd, !Ref dbSubGrpName, !Join ['', [!Ref dbSubGrpName, '-dev']]] # p
       SubnetIds:
       - !Ref PrivateSubnet1
       - !Ref PrivateSubnet2
