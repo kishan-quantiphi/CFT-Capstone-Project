@@ -131,13 +131,13 @@ Mappings:
       testingEC2Enabled : True
       instanceType : t2.micro
       maxInstances : 4
-      KeyPair : !Ref KeyName
+      # KeyPair : !Ref KeyName
       dbInstClass: 'db.t2.small'
     prod :
       testingEC2Enabled : False
       instanceType : t3.micro
       maxInstances : 6
-      KeyPair : AWS::NoValue
+      # KeyPair : !Ref AWS::NoValue
       dbInstClass: 'db.t2.small' # change for prod
 
   AWSInstanceType2Arch:
@@ -603,21 +603,21 @@ Resources:
       NetworkAclId:
         Ref: NACL1
 
-  privateSubnet1NAclAssociation:
-    Type: AWS::EC2::SubnetNetworkAclAssociation
-    Properties:
-      SubnetId:
-        Ref: PrivateSubnet1
-      NetworkAclId:
-        Ref: NACL2
+  # privateSubnet1NAclAssociation:
+  #   Type: AWS::EC2::SubnetNetworkAclAssociation
+  #   Properties:
+  #     SubnetId:
+  #       Ref: PrivateSubnet1
+  #     NetworkAclId:
+  #       Ref: NACL2
 
-  privateSubnet2NAclAssociation:
-    Type: AWS::EC2::SubnetNetworkAclAssociation
-    Properties:
-      SubnetId:
-        Ref: PrivateSubnet1
-      NetworkAclId:
-        Ref: NACL2
+  # privateSubnet2NAclAssociation:
+  #   Type: AWS::EC2::SubnetNetworkAclAssociation
+  #   Properties:
+  #     SubnetId:
+  #       Ref: PrivateSubnet1
+  #     NetworkAclId:
+  #       Ref: NACL2
 
   PublicNACLEgressEntry600:
     Type: AWS::EC2::NetworkAclEntry
@@ -703,7 +703,7 @@ Resources:
       Tags: 
         - 
           Key: "Name"
-          Value: "group3ShoppingWebsiteNACL1"
+          Value: "group3ShoppingWebsiteNACL2"
         - 
           Key: "Email"
           Value: "yashraj.gangal@quantiphi.com"
@@ -727,7 +727,7 @@ Resources:
     Type: AWS::EC2::SubnetNetworkAclAssociation
     Properties:
       SubnetId:
-        Ref: PrivateSubnet1
+        Ref: PrivateSubnet2
       NetworkAclId:
         Ref: NACL2
 
@@ -856,10 +856,11 @@ Resources:
         - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2
       MinSize: 0
-      MaxSize: !FindInMap
-        - environmentConfiguration
-        - !Ref Environment
-        - maxInstances
+      MaxSize:
+        Fn::FindInMap:
+          - environmentConfiguration
+          - !Ref Environment
+          - maxInstances
       LoadBalancerNames:
       - Ref: ElasticLoadBalancer
       Tags: 
@@ -890,23 +891,27 @@ Resources:
   LaunchConfig:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
-      KeyName:
-        Fn::FindInMap:
-          - environmentConfiguration
-          - !Ref Environment
-          - KeyPair
+      KeyName: 
+        !If: [isProd, '', !Ref KeyName]
       ImageId:
         Fn::FindInMap:
         - AWSRegionArch2AMI
         - Ref: AWS::Region
         - Fn::FindInMap:
           - AWSInstanceType2Arch
-          - Ref: InstanceType
+          - 
+            Fn::FindInMap:
+              - environmentConfiguration
+              - !Ref Environment
+              - instanceType
           - Arch
       SecurityGroups:
       - Ref: ServerInstanceSecurityGroup
       InstanceType:
-        Ref: InstanceType
+        Fn::FindInMap:
+              - environmentConfiguration
+              - !Ref Environment
+              - instanceType
       UserData:
         Fn::Base64:
           Fn::Join:
@@ -925,6 +930,17 @@ Resources:
             - "echo S3NAME=\""
             - !Ref S3ProdCat
             - "\" >> /etc/environment\n"
+            - "exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1\n"
+            - "apt-get -y update\n"
+            - "apt-get -y install jq awscli ruby2.0 || apt-get -y install jq awscli ruby\n"
+            - "REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r \".region\")\n"
+            - "cd /tmp/ \n"
+            - "wget https://aws-codedeploy-${REGION}.s3.amazonaws.com/latest/install\n"
+            - "chmod +x ./install\n"
+            # autoupdate codedeploy
+            - "sed -i '/@reboot/d' /etc/cron.d/codedeploy-agent-update\n"
+            - "chattr +i /etc/cron.d/codedeploy-agent-update\n"
+            - "rm -f /tmp/install"
 
 ################ Autoscaling policy for scaleup ####################
   WebServerScaleUpPolicy:
