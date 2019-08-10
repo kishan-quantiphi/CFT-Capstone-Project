@@ -250,7 +250,7 @@ Resources:
       Tags: 
         - 
           Key: "Name"
-          Value: "group3ShoppingWebsitePrivateSubnet1"
+          Value: "group3ShoppingWebsitePublicSubnet2"
         - 
           Key: "Email"
           Value: "yashraj.gangal@quantiphi.com"
