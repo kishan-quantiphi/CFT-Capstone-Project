@@ -802,7 +802,7 @@ Resources:
       RuleNumber: 100
 
 
-################ Autoscaling Group ####################
+  ################ Autoscaling Group ####################
   WebServerGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
@@ -948,7 +948,8 @@ Resources:
         Fn::Base64:
           Fn::Join:
           - ''
-          - - "#!/bin/bash -xe\n"
+          -
+            - "#!/bin/bash -xe\n"
             - 'yum update -y aws-cfn-bootstrap'
             - "/opt/aws/bin/cfn-init -v "
             - "         --stack "
@@ -964,6 +965,15 @@ Resources:
             - "         --region "
             - Ref: AWS::Region
             - "\n"
+            - "echo DBWRITER=\""
+            - !GetAtt DBCluster.Endpoint.Address
+            - "\" >> /etc/environment\n"
+            - "echo DBPORT=\""
+            - !GetAtt DBCluster.Endpoint.Port
+            - "\" >> /etc/environment\n"
+            - "echo DBREADER=\""
+            - !GetAtt DBCluster.ReadEndpoint.Address
+            - "\" >> /etc/environment\n"
 
 ################ Autoscaling policy for scaleup ####################
   WebServerScaleUpPolicy:
