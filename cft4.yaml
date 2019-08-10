@@ -671,6 +671,32 @@ Resources:
       RuleAction: allow
       RuleNumber: 500
 
+  PublicNACLEgressEntry50:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties: 
+      CidrBlock: "0.0.0.0/0"
+      Egress: True
+      NetworkAclId: !Ref NACL1
+      PortRange: 
+          From: 22
+          To: 22
+      Protocol: 6
+      RuleAction: allow
+      RuleNumber: 50
+
+  PublicNACLIngressEntry50:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties: 
+      CidrBlock: "0.0.0.0/0"
+      Egress: False
+      NetworkAclId: !Ref NACL1
+      PortRange: 
+          From: 22
+          To: 22
+      Protocol: 6
+      RuleAction: allow
+      RuleNumber: 50
+
   NACL2 : 
     Type: AWS::EC2::NetworkAcl
     Properties: 
@@ -760,7 +786,7 @@ Resources:
   PrivateNACLEgressEntry100:
     Type: AWS::EC2::NetworkAclEntry
     Properties: 
-      CidrBlock: "10.0.0.128/24"
+      CidrBlock: "10.0.0.128/25"
       Egress: True
       NetworkAclId: !Ref NACL2
       PortRange: 
@@ -773,7 +799,7 @@ Resources:
   PrivateNACLIngressEntry100:
     Type: AWS::EC2::NetworkAclEntry
     Properties: 
-      CidrBlock: "10.0.0.128/24"
+      CidrBlock: "10.0.0.128/25"
       Egress: False
       NetworkAclId: !Ref NACL2
       PortRange: 
@@ -782,6 +808,32 @@ Resources:
       Protocol: 6
       RuleAction: allow
       RuleNumber: 100
+
+  PrivateNACLEgressEntry50:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties: 
+      CidrBlock: "10.0.0.0/25"
+      Egress: True
+      NetworkAclId: !Ref NACL2
+      PortRange: 
+          From: 22
+          To: 22
+      Protocol: 6
+      RuleAction: allow
+      RuleNumber: 50
+
+  PrivateNACLIngressEntry50:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties: 
+      CidrBlock: "10.0.0.0/25"
+      Egress: False
+      NetworkAclId: !Ref NACL2
+      PortRange: 
+          From: 22
+          To: 22
+      Protocol: 6
+      RuleAction: allow
+      RuleNumber: 50
 
 
   ################ Autoscaling Group ####################
@@ -985,7 +1037,7 @@ Resources:
       Tags: 
         - 
           Key: "Name"
-          Value: "group3ShoppingWebsiteSecurityGroup"
+          Value: "group3ShoppingWebsiteLBSecurityGroup"
         - 
           Key: "Email"
           Value: "krutika.pasalkar@quantiphi.com"
@@ -1006,10 +1058,10 @@ Resources:
       Tags: 
         - 
           Key: "Name"
-          Value: "group3ShoppingWebsiteSecurityGroup"
+          Value: "group3ShoppingWebsiteServerSecurityGroup"
         - 
           Key: "Email"
-          Value: "krutika.pasalkar@quantiphi.com"
+          Value: "yashraj.gangal@quantiphi.com"
         - 
           Key: "Project"
           Value: "Capstone_Project"
@@ -1023,6 +1075,19 @@ Resources:
       GroupName : ServerRDSSG
       GroupDescription: Security Group for the RDS Instance
       VpcId: !Ref VPC
+      Tags: 
+        - 
+          Key: "Name"
+          Value: "group3ShoppingWebsiteServerSecurityGroup"
+        - 
+          Key: "Email"
+          Value: "yashraj.gangal@quantiphi.com"
+        - 
+          Key: "Project"
+          Value: "Capstone_Project"
+        - 
+          Key: "creatorGroup"
+          Value: "pe19batch2group3"
 
   UserInstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -1031,6 +1096,19 @@ Resources:
       GroupName : UserEC2SG
       GroupDescription: Security Group for the Developers testing EC2
       VpcId: !Ref VPC
+      Tags: 
+        - 
+          Key: "Name"
+          Value: "group3ShoppingWebsiteServerSecurityGroup"
+        - 
+          Key: "Email"
+          Value: "yashraj.gangal@quantiphi.com"
+        - 
+          Key: "Project"
+          Value: "Capstone_Project"
+        - 
+          Key: "creatorGroup"
+          Value: "pe19batch2group3"
 
 ################################# SG Rules #############################
 
