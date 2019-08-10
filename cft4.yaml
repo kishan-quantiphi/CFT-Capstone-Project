@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Networking, Security, Compute, Availability'
+Description: 'Networking, Security, Compute, Availability, Storage'
 
 Parameters:
 
@@ -53,10 +53,10 @@ Parameters:
     Default: 'pe-g3-dbcluster-3'
     Description: 'Name/Identifier for database cluster'
 
-  dbInstanceClass:
-    Type: String
-    Default: 'db.t2.small' # change for prod
-    Description: 'Instance type of database instances'
+  # dbInstanceClass:
+  #   Type: String
+  #   Default: 'db.t2.small' # change for prod
+  #   Description: 'Instance type of database instances'
   dbInstanceId:
     Type: String
     Default: 'pe-g3-dbinstance'
@@ -85,7 +85,8 @@ Parameters:
 
   tagName:
     Type: String
-    Default: 'av-tag-name' # modify for each res
+    # Default: 'av-tag-name' # modify for each res
+    Default: 'pe-b2-g3' # modify for each res
     Description: 'Value for Name tag'
   tagCreatorGroup:
     Type: String
@@ -95,6 +96,10 @@ Parameters:
     Type: String
     Default: 'Capstone_Project'
     Description: 'Value for Project tag'
+  tagEmail:
+    Type: String
+    Default: 'avinash.sidhwani@quantiphi.com'
+    Description: 'Value for Email tag'
 
   # ========== S3 ==========
   bucketName:
@@ -350,13 +355,16 @@ Resources:
       Tags:
         - 
           Key: "Name"
-          Value: !Ref tagName
+          Value: !If [isProd, !Ref tagName, !Join ['', [!Ref tagName, '-dev']]] # p
         - 
           Key: "Project"
-          Value: !Ref tagProject
+          Value: !Ref tagProject # p
         - 
           Key: "creatorGroup"
-          Value: !Ref tagCreatorGroup
+          Value: !Ref tagCreatorGroup # p
+        - 
+          Key: "Email"
+          Value: !Ref tagEmail # p
 
   ################ Internet Gateway ####################
 
@@ -794,7 +802,7 @@ Resources:
       RuleNumber: 100
 
 
-################ Autoscaling Group ####################
+  ################ Autoscaling Group ####################
   WebServerGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
@@ -938,7 +946,8 @@ Resources:
         Fn::Base64:
           Fn::Join:
           - ''
-          - - "#!/bin/bash -xe\n"
+          -
+            - "#!/bin/bash -xe\n"
             - 'yum update -y aws-cfn-bootstrap'
             - "/opt/aws/bin/cfn-init -v "
             - "         --stack "
@@ -954,6 +963,18 @@ Resources:
             - "         --region "
             - Ref: AWS::Region
             - "\n"
+            - "echo DBWRITER=\""
+            - !GetAtt RDSClusterMain.Endpoint.Address
+            - "\" >> /etc/environment\n"
+            - "echo DBPORT=\""
+            - !GetAtt RDSClusterMain.Endpoint.Port
+            - "\" >> /etc/environment\n"
+            - "echo DBREADER=\""
+            - !GetAtt RDSClusterMain.ReadEndpoint.Address
+            - "\" >> /etc/environment\n"
+            - "echo S3NAME=\""
+            - !Ref S3ProdCat
+            - "\" >> /etc/environment\n"
 
 ################ Autoscaling policy for scaleup ####################
   WebServerScaleUpPolicy:
@@ -1277,6 +1298,9 @@ Resources:
         - 
           Key: 'Project'
           Value: !Ref tagProject # p
+        - 
+          Key: "Email"
+          Value: !Ref tagEmail # p
       DBClusterParameterGroupName: !Ref RDSDBClusterPGMain
       # VPCSecurityGroupIds:
       # - Fn::GetAtt: [ DBInstanceSecurityGroup, GroupId ] 
@@ -1298,6 +1322,9 @@ Resources:
         - 
           Key: 'Project'
           Value: !Ref tagProject # p
+        - 
+          Key: "Email"
+          Value: !Ref tagEmail # p
   
   
   RDSDBInstancePGMain:
@@ -1318,6 +1345,9 @@ Resources:
         - 
           Key: 'Project'
           Value: !Ref tagProject # p
+        - 
+          Key: "Email"
+          Value: !Ref tagEmail # p
   
   RDSDBInstanceWriter:
     Type: 'AWS::RDS::DBInstance'
@@ -1352,6 +1382,9 @@ Resources:
         - 
           Key: 'Project'
           Value: !Ref tagProject # p
+        - 
+          Key: "Email"
+          Value: !Ref tagEmail # p
       # VPCSecurityGroups: 
       # - Ref: DBInstanceSecurityGroup
 
@@ -1389,6 +1422,9 @@ Resources:
         - 
           Key: 'Project'
           Value: !Ref tagProject # p
+        - 
+          Key: "Email"
+          Value: !Ref tagEmail # p
       # VPCSecurityGroups: 
       # - Ref: DBInstanceSecurityGroup
 
@@ -1427,6 +1463,9 @@ Resources:
         - 
           Key: 'Project'
           Value: !Ref tagProject # p
+        - 
+          Key: "Email"
+          Value: !Ref tagEmail # p
       # VPCSecurityGroups: 
       # - Ref: DBInstanceSecurityGroup
 
@@ -1455,6 +1494,9 @@ Resources:
         - 
           Key: 'Project'
           Value: !Ref tagProject # p
+        - 
+          Key: "Email"
+          Value: !Ref tagEmail # p
 
   S3BucketPolicyProdCat:
     Type: AWS::S3::BucketPolicy
