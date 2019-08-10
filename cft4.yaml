@@ -12,7 +12,7 @@ Parameters:
   KeyName:
     Description: The EC2 Key Pair to allow SSH access to the instances
     Type: AWS::EC2::KeyPair::KeyName
-    Default: test
+    Default: 'av-training-all'
     ConstraintDescription: must be the name of an existing EC2 KeyPair.
 
   SSHLocation:
@@ -915,8 +915,7 @@ Resources:
     #             - "/etc/cfn/cfn-hup.conf"
     #             - "/etc/cfn/hooks.d/cfn-auto-reloader.conf"
     Properties:
-      KeyName:
-        Ref: KeyName
+      KeyName: !If [isProd, !Ref AWS::NoValue, !Ref KeyName]
       ImageId:
         Fn::FindInMap:
         - AWSRegionArch2AMI
