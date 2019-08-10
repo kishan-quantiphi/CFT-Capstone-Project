@@ -76,11 +76,11 @@ Parameters:
     Description: 'Name of the database'
   dbMasterUser:
     Type: String
-    Default: 'pe_g3_master' # rem
+    Default: '' # rem
     Description: 'Username of database admin'
   dbMasterPwd:
     Type: String
-    Default: 'pe_g3_passwd' # rem
+    Default: '' # rem
     Description: 'Password of database admin'
 
   tagName:
