@@ -891,8 +891,7 @@ Resources:
   LaunchConfig:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
-      KeyName: 
-        !If: [isProd, '', !Ref KeyName]
+      KeyName: !If [isProd, '', !Ref KeyName]
       ImageId:
         Fn::FindInMap:
         - AWSRegionArch2AMI
