@@ -131,26 +131,24 @@ Mappings:
       testingEC2Enabled : True
       instanceType : t2.micro
       maxInstances : 4
-
+      KeyPair : !Ref KeyName
       dbInstClass: 'db.t2.small'
     prod :
       testingEC2Enabled : False
       instanceType : t3.micro
       maxInstances : 6
-
+      KeyPair : AWS::NoValue
       dbInstClass: 'db.t2.small' # change for prod
 
   AWSInstanceType2Arch:
     t2.micro:
       Arch: HVM64
-  
-  AWSInstanceType2NATArch:
-    t2.micro:
-      Arch: NATHVM64
-  
+    t3.medium:
+      Arch: HVM64
+
   AWSRegionArch2AMI:
     us-east-1:
-      HVM64: ami-0ff8a91507f77f867
+      HVM64: ami-07d0cf3af28718ef8
       
 Resources:
   ################ VPC ####################
@@ -222,7 +220,7 @@ Resources:
         Tags: 
           - 
             Key: "Name"
-            Value: "group3ShoppingWebsitePublicSubnet2"
+            Value: "group3ShoppingWebsitePrivateSubnet1"
           - 
             Key: "Email"
             Value: "yashraj.gangal@quantiphi.com"
@@ -707,7 +705,7 @@ Resources:
       NetworkAclId:
         Ref: NACL2
 
-  PublicNACLEgressEntry600:
+  PrivateNACLEgressEntry600:
     Type: AWS::EC2::NetworkAclEntry
     Properties: 
       CidrBlock: "0.0.0.0/0"
@@ -720,7 +718,7 @@ Resources:
       RuleAction: allow
       RuleNumber: 600
 
-  PublicNACLIngressEntry600:
+  PrivateNACLIngressEntry600:
     Type: AWS::EC2::NetworkAclEntry
     Properties: 
       CidrBlock: "0.0.0.0/0"
@@ -733,7 +731,7 @@ Resources:
       RuleAction: allow
       RuleNumber: 600
 
-  PublicNACLEgressEntry500:
+  PrivateNACLEgressEntry500:
     Type: AWS::EC2::NetworkAclEntry
     Properties: 
       CidrBlock: "0.0.0.0/0"
@@ -746,7 +744,7 @@ Resources:
       RuleAction: allow
       RuleNumber: 500
 
-  PublicNACLIngressEntry500:
+  PrivateNACLIngressEntry500:
     Type: AWS::EC2::NetworkAclEntry
     Properties: 
       CidrBlock: "0.0.0.0/0"
@@ -759,7 +757,7 @@ Resources:
       RuleAction: allow
       RuleNumber: 500
 
-  PublicNACLEgressEntry100:
+  PrivateNACLEgressEntry100:
     Type: AWS::EC2::NetworkAclEntry
     Properties: 
       CidrBlock: "10.0.0.128/24"
@@ -772,7 +770,7 @@ Resources:
       RuleAction: allow
       RuleNumber: 100
 
-  PublicNACLIngressEntry100:
+  PrivateNACLIngressEntry100:
     Type: AWS::EC2::NetworkAclEntry
     Properties: 
       CidrBlock: "10.0.0.128/24"
@@ -841,7 +839,10 @@ Resources:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
       KeyName:
-        Ref: KeyName
+        Fn::FindInMap:
+          - environmentConfiguration
+          - !Ref Environment
+          - KeyPair
       ImageId:
         Fn::FindInMap:
         - AWSRegionArch2AMI
