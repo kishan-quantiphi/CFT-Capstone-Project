@@ -966,13 +966,16 @@ Resources:
             - Ref: AWS::Region
             - "\n"
             - "echo DBWRITER=\""
-            - !GetAtt DBCluster.Endpoint.Address
+            - !GetAtt RDSClusterMain.Endpoint.Address
             - "\" >> /etc/environment\n"
             - "echo DBPORT=\""
-            - !GetAtt DBCluster.Endpoint.Port
+            - !GetAtt RDSClusterMain.Endpoint.Port
             - "\" >> /etc/environment\n"
             - "echo DBREADER=\""
-            - !GetAtt DBCluster.ReadEndpoint.Address
+            - !GetAtt RDSClusterMain.ReadEndpoint.Address
+            - "\" >> /etc/environment\n"
+            - "echo S3NAME=\""
+            - !Ref S3ProdCat
             - "\" >> /etc/environment\n"
 
 ################ Autoscaling policy for scaleup ####################
