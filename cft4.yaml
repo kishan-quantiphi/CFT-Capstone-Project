@@ -6,7 +6,7 @@ Parameters:
   KeyName:
     Description: The EC2 Key Pair to allow SSH access to the instances
     Type: AWS::EC2::KeyPair::KeyName
-    Default: test
+    Default: 'av-training-all'
     ConstraintDescription: must be the name of an existing EC2 KeyPair.
 
   Environment :
@@ -838,11 +838,15 @@ Resources:
   LaunchConfig:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
+<<<<<<< HEAD
       KeyName:
         Fn::FindInMap:
           - environmentConfiguration
           - !Ref Environment
           - KeyPair
+=======
+      KeyName: !If [isProd, '', !Ref KeyName]
+>>>>>>> 86e5d3687fb5b27604414d0540a9bc5495eea389
       ImageId:
         Fn::FindInMap:
         - AWSRegionArch2AMI
