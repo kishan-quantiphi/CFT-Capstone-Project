@@ -859,61 +859,61 @@ Resources:
 ################ Launch Configuration ####################
   LaunchConfig:
     Type: AWS::AutoScaling::LaunchConfiguration
-    Metadata:
-      Comment: Install a simple application
-      AWS::CloudFormation::Init:
-        config:
-          packages:
-            yum:
-              httpd: []
-          files:
-            "/var/www/html/index.html":
-              content:
-                - "<h1>Congratulations, you have successfully launched the AWS CloudFormation
-                    sample.</h1>"
-              mode: '000644'
-              owner: root
-              group: root
-            "/etc/cfn/cfn-hup.conf":
-              content:
-                Fn::Join:
-                - ''
-                - - "[main]\n"
-                  - stack=
-                  - Ref: AWS::StackId
-                  - "\n"
-                  - region=
-                  - Ref: AWS::Region
-                  - "\n"
-              mode: '000400'
-              owner: root
-              group: root
-            "/etc/cfn/hooks.d/cfn-auto-reloader.conf":
-              content:
-                Fn::Join:
-                - ''
-                - - "[cfn-auto-reloader-hook]\n"
-                  - 'triggers=post.update'
-                  - 'path=Resources.LaunchConfig.Metadata.AWS::CloudFormation::Init'
-                  - 'action=/opt/aws/bin/cfn-init -v '
-                  - "         --stack "
-                  - Ref: AWS::StackName
-                  - "         --resource LaunchConfig "
-                  - "         --region "
-                  - Ref: AWS::Region
-                  - "\n"
-                  - 'runas=root'
-          services:
-            sysvinit:
-              httpd:
-                enabled: 'true'
-                ensureRunning: 'true'
-              cfn-hup:
-                enabled: 'true'
-                ensureRunning: 'true'
-                files:
-                - "/etc/cfn/cfn-hup.conf"
-                - "/etc/cfn/hooks.d/cfn-auto-reloader.conf"
+    # Metadata:
+    #   Comment: Install a simple application
+    #   AWS::CloudFormation::Init:
+    #     config:
+    #       packages:
+    #         yum:
+    #           httpd: []
+    #       files:
+    #         "/var/www/html/index.html":
+    #           content:
+    #             - "<h1>Congratulations, you have successfully launched the AWS CloudFormation
+    #                 sample.</h1>"
+    #           mode: '000644'
+    #           owner: root
+    #           group: root
+    #         "/etc/cfn/cfn-hup.conf":
+    #           content:
+    #             Fn::Join:
+    #             - ''
+    #             - - "[main]\n"
+    #               - stack=
+    #               - Ref: AWS::StackId
+    #               - "\n"
+    #               - region=
+    #               - Ref: AWS::Region
+    #               - "\n"
+    #           mode: '000400'
+    #           owner: root
+    #           group: root
+    #         "/etc/cfn/hooks.d/cfn-auto-reloader.conf":
+    #           content:
+    #             Fn::Join:
+    #             - ''
+    #             - - "[cfn-auto-reloader-hook]\n"
+    #               - 'triggers=post.update'
+    #               - 'path=Resources.LaunchConfig.Metadata.AWS::CloudFormation::Init'
+    #               - 'action=/opt/aws/bin/cfn-init -v '
+    #               - "         --stack "
+    #               - Ref: AWS::StackName
+    #               - "         --resource LaunchConfig "
+    #               - "         --region "
+    #               - Ref: AWS::Region
+    #               - "\n"
+    #               - 'runas=root'
+    #       services:
+    #         sysvinit:
+    #           httpd:
+    #             enabled: 'true'
+    #             ensureRunning: 'true'
+    #           cfn-hup:
+    #             enabled: 'true'
+    #             ensureRunning: 'true'
+    #             files:
+    #             - "/etc/cfn/cfn-hup.conf"
+    #             - "/etc/cfn/hooks.d/cfn-auto-reloader.conf"
     Properties:
       KeyName:
         Ref: KeyName
@@ -948,21 +948,21 @@ Resources:
           - ''
           -
             - "#!/bin/bash -xe\n"
-            - 'yum update -y aws-cfn-bootstrap'
-            - "/opt/aws/bin/cfn-init -v "
-            - "         --stack "
-            - Ref: AWS::StackName
-            - "         --resource LaunchConfig "
-            - "         --region "
-            - Ref: AWS::Region
-            - "\n"
-            - "/opt/aws/bin/cfn-signal -e $? "
-            - "         --stack "
-            - Ref: AWS::StackName
-            - "         --resource WebServerGroup "
-            - "         --region "
-            - Ref: AWS::Region
-            - "\n"
+            # - 'yum update -y aws-cfn-bootstrap'
+            # - "/opt/aws/bin/cfn-init -v "
+            # - "         --stack "
+            # - Ref: AWS::StackName
+            # - "         --resource LaunchConfig "
+            # - "         --region "
+            # - Ref: AWS::Region
+            # - "\n"
+            # - "/opt/aws/bin/cfn-signal -e $? "
+            # - "         --stack "
+            # - Ref: AWS::StackName
+            # - "         --resource WebServerGroup "
+            # - "         --region "
+            # - Ref: AWS::Region
+            # - "\n"
             - "echo DBWRITER=\""
             - !GetAtt RDSClusterMain.Endpoint.Address
             - "\" >> /etc/environment\n"
