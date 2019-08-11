@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Networking, Security, Compute, Availability, Storage'
+Description: 'Resources used by PE batch-2 group-3 for their Capstone Project.'
 
 Parameters:
 
