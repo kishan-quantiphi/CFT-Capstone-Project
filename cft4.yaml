@@ -38,10 +38,46 @@ Parameters:
     Default: 'pe-g3-dbcluster-3'
     Description: 'Name/Identifier for database cluster'
 
-  # dbInstanceClass:
-  #   Type: String
-  #   Default: 'db.t2.small' # change for prod
-  #   Description: 'Instance type of database instances'
+  dbInstanceClassDev:
+    Type: String
+    Default: 'db.t2.small'
+    AllowedValues:
+      - "db.t2.small"
+      - "db.t2.medium"
+      - "db.t3.small"
+      - "db.t3.medium"
+      - "db.r4.large"
+      - "db.r4.xlarge"
+      - "db.r4.2xlarge"
+      - "db.r4.4xlarge"
+      - "db.r4.8xlarge"
+      - "db.r4.16xlarge"
+      - "db.r5.large"
+      - "db.r5.xlarge"
+      - "db.r5.2xlarge"
+      - "db.r5.4xlarge"
+      - "db.r5.12xlarge"
+    Description: 'Instance type of database instances'
+  dbInstanceClassProd:
+    Type: String
+    Default: 'db.t2.small' # change
+    AllowedValues:
+      - "db.t2.small"
+      - "db.t2.medium"
+      - "db.t3.small"
+      - "db.t3.medium"
+      - "db.r4.large"
+      - "db.r4.xlarge"
+      - "db.r4.2xlarge"
+      - "db.r4.4xlarge"
+      - "db.r4.8xlarge"
+      - "db.r4.16xlarge"
+      - "db.r5.large"
+      - "db.r5.xlarge"
+      - "db.r5.2xlarge"
+      - "db.r5.4xlarge"
+      - "db.r5.12xlarge"
+    Description: 'Instance type of database instances'
   dbInstanceId:
     Type: String
     Default: 'pe-g3-dbinstance'
