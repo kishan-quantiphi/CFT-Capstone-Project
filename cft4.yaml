@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Networking, Security, Compute, Availability, Storage'
+Description: 'Resources used by PE batch-2 group-3 for their Capstone Project.'
 
 Parameters:
 
@@ -891,7 +891,11 @@ Resources:
   LaunchConfig:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
-      KeyName: !If [isProd, '', !Ref KeyName]
+      KeyName: 
+        Fn::If:
+          - isProd
+          - !Ref KeyName
+          - !Ref AWS::NoValue
       ImageId:
         Fn::FindInMap:
         - AWSRegionArch2AMI
