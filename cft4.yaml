@@ -330,10 +330,7 @@ Resources:
       SubnetIds:
       - !Ref PrivateSubnet1
       - !Ref PrivateSubnet2
-      - !If
-        - isProd
-        - !Ref PrivateSubnet3
-        - !Ref AWS::NoValue
+      - !If [isProd, !Ref PrivateSubnet3, !Ref AWS::NoValue]
       Tags:
         - 
           Key: "Name"
@@ -372,10 +369,8 @@ Resources:
   InternetGatewayAttachment :
     Type: AWS::EC2::VPCGatewayAttachment
     Properties: 
-      VpcId:
-        Ref: VPC
-      InternetGatewayId:
-          Ref: InternetGateway
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
 
   ################ Elastic IP for NAT 1 ####################
 
