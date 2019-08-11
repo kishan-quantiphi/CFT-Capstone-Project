@@ -603,22 +603,7 @@ Resources:
       NetworkAclId:
         Ref: NACL1
 
-  # privateSubnet1NAclAssociation:
-  #   Type: AWS::EC2::SubnetNetworkAclAssociation
-  #   Properties:
-  #     SubnetId:
-  #       Ref: PrivateSubnet1
-  #     NetworkAclId:
-  #       Ref: NACL2
-
-  # privateSubnet2NAclAssociation:
-  #   Type: AWS::EC2::SubnetNetworkAclAssociation
-  #   Properties:
-  #     SubnetId:
-  #       Ref: PrivateSubnet1
-  #     NetworkAclId:
-  #       Ref: NACL2
-
+  # HTTPS
   PublicNACLEgressEntry600:
     Type: AWS::EC2::NetworkAclEntry
     Properties: 
@@ -645,6 +630,7 @@ Resources:
       RuleAction: allow
       RuleNumber: 600
 
+  # HTTP
   PublicNACLEgressEntry500:
     Type: AWS::EC2::NetworkAclEntry
     Properties: 
@@ -671,8 +657,10 @@ Resources:
       RuleAction: allow
       RuleNumber: 500
 
+  # SSH when testing
   PublicNACLEgressEntry50:
     Type: AWS::EC2::NetworkAclEntry
+    Condition : testingEnabled
     Properties: 
       CidrBlock: "0.0.0.0/0"
       Egress: True
@@ -686,6 +674,7 @@ Resources:
 
   PublicNACLIngressEntry50:
     Type: AWS::EC2::NetworkAclEntry
+    Condition : testingEnabled
     Properties: 
       CidrBlock: "0.0.0.0/0"
       Egress: False
@@ -696,6 +685,36 @@ Resources:
       Protocol: 6
       RuleAction: allow
       RuleNumber: 50
+
+  # 3306 when testing
+  PublicNACLEgressEntry20:
+    Type: AWS::EC2::NetworkAclEntry
+    Condition : testingEnabled
+    Properties: 
+      CidrBlock: "10.0.0.128/25"
+      Egress: True
+      NetworkAclId: !Ref NACL1
+      PortRange: 
+          From: 3306
+          To: 3306
+      Protocol: 6
+      RuleAction: allow
+      RuleNumber: 20
+
+  PublicNACLIngressEntry20:
+    Type: AWS::EC2::NetworkAclEntry
+    Condition : testingEnabled
+    Properties: 
+      CidrBlock: "10.0.0.128/25"
+      Egress: False
+      NetworkAclId: !Ref NACL1
+      PortRange: 
+          From: 3306
+          To: 3306
+      Protocol: 6
+      RuleAction: allow
+      RuleNumber: 20
+
 
   NACL2 : 
     Type: AWS::EC2::NetworkAcl
@@ -731,6 +750,7 @@ Resources:
       NetworkAclId:
         Ref: NACL2
 
+  # HTTP
   PrivateNACLEgressEntry600:
     Type: AWS::EC2::NetworkAclEntry
     Properties: 
@@ -757,6 +777,7 @@ Resources:
       RuleAction: allow
       RuleNumber: 600
 
+  # HTTPS
   PrivateNACLEgressEntry500:
     Type: AWS::EC2::NetworkAclEntry
     Properties: 
@@ -783,6 +804,7 @@ Resources:
       RuleAction: allow
       RuleNumber: 500
 
+  # 3306 within private subnets
   PrivateNACLEgressEntry100:
     Type: AWS::EC2::NetworkAclEntry
     Properties: 
@@ -809,8 +831,37 @@ Resources:
       RuleAction: allow
       RuleNumber: 100
 
+  # 3306 with public subnets when testing enabled
+  PrivateNACLEgressEntry70:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties: 
+      CidrBlock: "10.0.0.0/25"
+      Egress: True
+      NetworkAclId: !Ref NACL2
+      PortRange: 
+          From: 3306
+          To: 3306
+      Protocol: 6
+      RuleAction: allow
+      RuleNumber: 70
+
+  PrivateNACLIngressEntry70:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties: 
+      CidrBlock: "10.0.0.0/25"
+      Egress: False
+      NetworkAclId: !Ref NACL2
+      PortRange: 
+          From: 3306
+          To: 3306
+      Protocol: 6
+      RuleAction: allow
+      RuleNumber: 70
+
+  # SSH from public subnet when testing
   PrivateNACLEgressEntry50:
     Type: AWS::EC2::NetworkAclEntry
+    Condition : testingEnabled
     Properties: 
       CidrBlock: "10.0.0.0/25"
       Egress: True
@@ -824,6 +875,7 @@ Resources:
 
   PrivateNACLIngressEntry50:
     Type: AWS::EC2::NetworkAclEntry
+    Condition : testingEnabled
     Properties: 
       CidrBlock: "10.0.0.0/25"
       Egress: False
@@ -867,7 +919,12 @@ Resources:
       - 
         Key: "Name"
         PropagateAtLaunch : True
-        Value: "group3ShoppingWebsiteAutoscalingGroup"
+        Value: 
+          Fn::Join: 
+            - ""
+            - 
+              - "group3ShoppingWebsiteAutoscalingGroup-"
+              - !Ref Environment
       - 
         Key: "Email"
         PropagateAtLaunch : True
