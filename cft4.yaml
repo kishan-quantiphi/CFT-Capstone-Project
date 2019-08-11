@@ -148,7 +148,7 @@ Mappings:
 
   AWSRegionArch2AMI:
     us-east-1:
-      HVM64: ami-07d0cf3af28718ef8
+      HVM64: ami-0cfee17793b08a293
       
 Resources:
   ################ VPC ####################
@@ -328,9 +328,12 @@ Resources:
       DBSubnetGroupDescription: 'Subnet group for RDS'
       DBSubnetGroupName: !If [isProd, !Ref dbSubGrpName, !Join ['', [!Ref dbSubGrpName, '-dev']]] # p
       SubnetIds:
-      - !Ref PrivateSubnet1
-      - !Ref PrivateSubnet2
-      - !If [isProd, !Ref PrivateSubnet3, !Ref AWS::NoValue]
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+        - Fn::If:
+            - isProd
+            - !Ref PrivateSubnet3
+            - !Ref AWS::NoValue
       Tags:
         - 
           Key: "Name"
