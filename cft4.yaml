@@ -955,7 +955,7 @@ Resources:
     Type: AWS::EC2::NetworkAclEntry
     Condition : testingEnabled
     Properties: 
-      CidrBlock: "10.0.0.0/25"
+      CidrBlock: "0.0.0.0/0"
       Egress: True
       NetworkAclId: !Ref NACL2
       PortRange: 
@@ -969,7 +969,7 @@ Resources:
     Type: AWS::EC2::NetworkAclEntry
     Condition : testingEnabled
     Properties: 
-      CidrBlock: "10.0.0.0/25"
+      CidrBlock: "0.0.0.0/0"
       Egress: False
       NetworkAclId: !Ref NACL2
       PortRange: 
@@ -1271,7 +1271,7 @@ Resources:
       Tags: 
         - 
           Key: "Name"
-          Value: "group3ShoppingWebsiteServerSecurityGroup"
+          Value: "group3ShoppingWebsiteUserSecurityGroup"
         - 
           Key: "Email"
           Value: "yashraj.gangal@quantiphi.com"
@@ -1390,6 +1390,25 @@ Resources:
       SourceSecurityGroupId: !Ref DBInstanceSecurityGroup
       ToPort: 3306
 
+  UserSGEgressHTTPS :
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties: 
+      CidrIp : "0.0.0.0/0"
+      Description: Allows HTTPS to Internet
+      FromPort: 443
+      GroupId: !GetAtt [UserInstanceSecurityGroup, GroupId]
+      IpProtocol: tcp
+      ToPort: 443
+
+  UserSGEgressHTTP :
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties: 
+      CidrIp : "0.0.0.0/0"
+      Description: Allows HTTP to Internet
+      FromPort: 80
+      GroupId: !GetAtt [UserInstanceSecurityGroup, GroupId]
+      IpProtocol: tcp
+      ToPort: 80
 
 
   # ================ Storage ================
