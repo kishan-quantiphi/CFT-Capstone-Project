@@ -1516,7 +1516,7 @@ Resources:
               Ref : "AWS::Region"
       # BackupRetentionPeriod: 1
       DBClusterIdentifier: !Ref RDSClusterMain
-      DBInstanceClass: !If [isProd, !FindInMap [environmentConfiguration, prod, dbInstClass], !FindInMap [environmentConfiguration, dev, dbInstClass]] # !Ref dbInstanceClass # p
+      DBInstanceClass: !If [isProd, !Ref dbInstanceClassProd, !Ref dbInstanceClassDev] # !Ref dbInstanceClass # p
       DBInstanceIdentifier: !If [isProd, !Ref dbInstanceId, !Join ['', [!Ref dbInstanceId, '-dev']]] # p
       DBParameterGroupName: !Ref RDSDBInstancePGMain
       # DBSubnetGroupName: !Ref DBSubnetGroup1 # para e
@@ -1556,7 +1556,7 @@ Resources:
               Ref : "AWS::Region"
       # BackupRetentionPeriod: 1
       DBClusterIdentifier: !Ref RDSClusterMain
-      DBInstanceClass: !If [isProd, !FindInMap [environmentConfiguration, prod, dbInstClass], !FindInMap [environmentConfiguration, dev, dbInstClass]] # !Ref dbInstanceClass # p
+      DBInstanceClass: !If [isProd, !Ref dbInstanceClassProd, !Ref dbInstanceClassDev] # !Ref dbInstanceClass # p
       DBInstanceIdentifier: !If [isProd, !Ref dbInstanceIdR1, !Join ['', [!Ref dbInstanceIdR1, '-dev']]] # p
       DBParameterGroupName: !Ref RDSDBInstancePGMain
       # DBSubnetGroupName: !Ref DBSubnetGroup1 # para e
@@ -1597,7 +1597,7 @@ Resources:
               Ref : "AWS::Region"
       # BackupRetentionPeriod: 1
       DBClusterIdentifier: !Ref RDSClusterMain
-      DBInstanceClass: !If [isProd, !FindInMap [environmentConfiguration, prod, dbInstClass], !FindInMap [environmentConfiguration, dev, dbInstClass]] # !Ref dbInstanceClass # p
+      DBInstanceClass: !If [isProd, !Ref dbInstanceClassProd, !Ref dbInstanceClassDev] # !Ref dbInstanceClass # p
       DBInstanceIdentifier: !Ref dbInstanceIdR2 # only created in prod env # p
       DBParameterGroupName: !Ref RDSDBInstancePGMain
       # DBSubnetGroupName: !Ref DBSubnetGroup1 # para e
@@ -1623,6 +1623,32 @@ Resources:
           Value: !Ref tagEmail # p
       # VPCSecurityGroups: 
       # - Ref: DBInstanceSecurityGroup
+
+
+  
+  RDSScalableTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties: 
+      MaxCapacity: 8
+      MinCapacity: 2
+      ResourceId: !Join ['', ["cluster:", !Ref dbClusterId]] # p
+      RoleARN: "arn:aws:iam::488599217855:role/AWSServiceRoleForApplicationAutoScaling_RDSCluster"
+      ScalableDimension: "rds:cluster:ReadReplicaCount"
+      ServiceNamespace: "rds"
+  RDSScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties: 
+      PolicyName: "pe-g3-dbscalingpolicy"
+      PolicyType: "TargetTrackingScaling"
+      ScalingTargetId: !Ref RDSScalableTarget
+      TargetTrackingScalingPolicyConfiguration: 
+        TargetValue: 60
+        PredefinedMetricSpecification:
+          PredefinedMetricType: RDSReaderAverageCPUUtilization
+
+
+
+
 
 
   # ============== S3 ==============
