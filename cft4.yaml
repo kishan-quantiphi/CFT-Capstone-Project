@@ -999,7 +999,7 @@ Resources:
       VPCZoneIdentifier:
         - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2
-      MinSize: 0
+      MinSize: 1
       MaxSize:
         Fn::FindInMap:
           - environmentConfiguration
@@ -1082,12 +1082,12 @@ Resources:
             - "echo S3NAME=\""
             - !Ref S3ProdCat
             - "\" >> /etc/environment\n"
-            - "exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1\n"
+            # - "exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1\n"
             - "apt-get -y update\n"
             - "apt-get -y install jq awscli ruby2.0 || apt-get -y install jq awscli ruby\n"
             - "REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r \".region\")\n"
             - "cd /tmp/ \n"
-            - "wget https://aws-codedeploy-${REGION}.s3.amazonaws.com/latest/install\n"
+            - "wget https://aws-codedeploy-${REGION}.s3.${REGION}.amazonaws.com/latest/install\n"
             - "chmod +x ./install\n"
             # autoupdate codedeploy
             - "sed -i '/@reboot/d' /etc/cron.d/codedeploy-agent-update\n"
