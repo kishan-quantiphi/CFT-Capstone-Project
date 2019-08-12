@@ -40,7 +40,7 @@ Parameters:
 
   dbInstanceClassDev:
     Type: String
-    Default: 'db.t2.small'
+    Default: 'db.t3.small'
     AllowedValues:
       - "db.t2.small"
       - "db.t2.medium"
@@ -985,8 +985,8 @@ Resources:
       KeyName: 
         Fn::If:
           - isProd
-          - !Ref KeyName
           - !Ref AWS::NoValue
+          - !Ref KeyName
       ImageId:
         Fn::FindInMap:
         - AWSRegionArch2AMI
