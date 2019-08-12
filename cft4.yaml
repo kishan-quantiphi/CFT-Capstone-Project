@@ -1083,16 +1083,20 @@ Resources:
             - !Ref S3ProdCat
             - "\" >> /etc/environment\n"
             # - "exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1\n"
-            - "apt-get -y update\n"
-            - "apt-get -y install jq awscli ruby2.0 || apt-get -y install jq awscli ruby\n"
-            - "REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r \".region\")\n"
-            - "cd /tmp/ \n"
-            - "wget https://aws-codedeploy-${REGION}.s3.${REGION}.amazonaws.com/latest/install\n"
+            - "apt-get update -y\n"
+            - "apt-get install -y ruby\n"
+            - "apt-get install -y wget\n"
+            - "cd /home/ubuntu \n"
+            # - "REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r \".region\")\n"
+            # - "wget https://aws-codedeploy-${REGION}.s3.${REGION}.amazonaws.com/latest/install\n"
+            - "wget https://aws-codedeploy-us-east-1.s3.us-east-1.amazonaws.com/latest/install\n"
             - "chmod +x ./install\n"
-            # autoupdate codedeploy
-            - "sed -i '/@reboot/d' /etc/cron.d/codedeploy-agent-update\n"
-            - "chattr +i /etc/cron.d/codedeploy-agent-update\n"
-            - "rm -f /tmp/install"
+            #autoupdate codedeploy
+            # - "sed -i '/@reboot/d' /etc/cron.d/codedeploy-agent-update\n"
+            # - "chattr +i /etc/cron.d/codedeploy-agent-update\n"
+            # - "rm -f /tmp/install"
+            - "./install auto\n"
+            - "service codedeploy-agent start"
 
 ################ Autoscaling policy for scaleup ####################
   WebServerScaleUpPolicy:
