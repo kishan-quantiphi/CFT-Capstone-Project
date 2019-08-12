@@ -943,7 +943,7 @@ Resources:
       VPCZoneIdentifier:
         - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2
-      MinSize: 0
+      MinSize: 1
       MaxSize:
         Fn::FindInMap:
           - environmentConfiguration
@@ -1098,7 +1098,7 @@ Resources:
 
 ################ Loadbalancer ####################
   ElasticLoadBalancer:
-    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       CrossZone: 'true'
       Listeners:
