@@ -1034,7 +1034,7 @@ Resources:
         MinInstancesInService: 0
         MaxBatchSize: '1'
         PauseTime: PT15M
-        WaitOnResourceSignals: 'false'
+        WaitOnResourceSignals: false
   
 ################ Launch Configuration ####################
   LaunchConfig:
