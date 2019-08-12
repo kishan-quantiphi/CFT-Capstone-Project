@@ -60,7 +60,7 @@ Parameters:
     Description: 'Instance type of database instances'
   dbInstanceClassProd:
     Type: String
-    Default: 'db.t2.small' # change
+    Default: 'db.t3.medium' # change
     AllowedValues:
       - "db.t2.small"
       - "db.t2.medium"
