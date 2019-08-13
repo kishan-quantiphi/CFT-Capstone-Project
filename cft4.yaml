@@ -1158,7 +1158,7 @@ Resources:
 
 ################ Loadbalancer ####################
   ElasticLoadBalancer:
-    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       CrossZone: 'true'
       Listeners:
